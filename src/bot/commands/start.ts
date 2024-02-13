@@ -1,7 +1,14 @@
-import { BOT_USERNAME } from "@/utils/env";
-import { CommandContext, Context } from "grammy";
+import { CommandContext, Context, InputFile } from "grammy";
 
 export async function startBot(ctx: CommandContext<Context>) {
-  const text = `*Welcome to ${BOT_USERNAME}!!!*\n\n`;
-  ctx.reply(text, { parse_mode: "Markdown" });
+  const text = `What Can This Bot Do?
+The TulipAiBot
+
+TulipAI Standard Picture Generator Bot, Generats High quality Custom Images according to the User's Needs.
+
+https://t.me/TulipAiPortal`;
+
+  const video = new InputFile("./tulip.mp4");
+
+  ctx.replyWithVideo(video, { caption: text });
 }
