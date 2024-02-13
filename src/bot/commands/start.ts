@@ -5,8 +5,7 @@ export async function startBot(ctx: CommandContext<Context>) {
 The TulipAiBot
 
 TulipAI Standard Picture Generator Bot, Generats High quality Custom Images according to the User's Needs.
-
-https://t.me/TulipAiPortal`;
+@tulipaierc`;
 
   const video = new InputFile("./tulip.mp4");
 
