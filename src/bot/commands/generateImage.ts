@@ -1,16 +1,18 @@
 import { openai } from "@/index";
 import { hardCleanUpBotMessage } from "@/utils/bot";
-import { log } from "@/utils/handlers";
+import { errorHandler, log } from "@/utils/handlers";
 import { CommandContext, Context } from "grammy";
 
 export async function generateImage(ctx: CommandContext<Context>) {
   try {
     const { match } = ctx;
 
-    if (!match)
+    if (!match) {
+      log("Invalid command use");
       return ctx.reply(
         "Please provide a prompt like -\n/generate a white horse in a meadow"
       );
+    }
     await ctx.reply("Generating image...");
 
     const chatCompletion = await openai.images.generate({
@@ -29,6 +31,7 @@ export async function generateImage(ctx: CommandContext<Context>) {
       }
     }
   } catch (error) {
-    ctx.reply("Open AI credit low, please add more");
+    errorHandler(error);
+    ctx.reply("Not able to generate image, please try again.");
   }
 }
