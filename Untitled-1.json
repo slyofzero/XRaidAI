@@ -1,0 +1,23 @@
+{
+  "id": "chatcmpl-91GprJr76c9idV0Kda0pYVjyczbnb",
+  "object": "chat.completion",
+  "created": 1710090071,
+  "model": "gpt-3.5-turbo-0125",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "🐾🌟 Welcome to Doggie Coin! 🌟🐾 \n\nAre you a dog lover looking for a fun and innovative cryptocurrency project? Look no further! Doggie Coin is here to revolutionize the pet industry with its unique blockchain technology. \n\nJoin our community of paw-some investors and take part in making a difference in the world of doggies. With Doggie Coin, your investments can help improve the lives of our furry friends. 🐶🚀\n\nDon't miss out on this exciting opportunity to be a part of something special. Invest in Doggie Coin today and watch your investment grow like never before! 🌈🚀🌟\n\n#DoggieCoin #ToTheMoon #InvestInDogs"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 56,
+    "completion_tokens": 156,
+    "total_tokens": 212
+  },
+  "system_fingerprint": "fp_4f0b692a78"
+}
