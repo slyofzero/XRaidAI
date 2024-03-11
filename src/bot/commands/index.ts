@@ -4,15 +4,18 @@ import { log } from "@/utils/handlers";
 import { shillTextStep1 } from "./generateShillText";
 import { userState } from "@/vars/userState";
 import { executeStep } from "@/utils/bot";
+import { subscription } from "../subscription";
 
 export function initiateBotCommands() {
   teleBot.api.setMyCommands([
     { command: "start", description: "Start the bot" },
     { command: "generate", description: "To generate a shill text" },
+    { command: "subscribe", description: "To subscribe to the bot" },
   ]);
 
   teleBot.command("start", (ctx) => startBot(ctx));
   teleBot.command("generate", async (ctx) => shillTextStep1(ctx));
+  teleBot.command("subscribe", (ctx) => subscription(ctx));
 
   teleBot.on(":text", (ctx) => {
     const userId = ctx.from?.id;
