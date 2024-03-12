@@ -4,6 +4,29 @@ import { shillTextData } from "@/vars/shillText";
 import { userState } from "@/vars/userState";
 import { CommandContext, Context, InlineKeyboard } from "grammy";
 
+export async function shillTextStep0(ctx: CommandContext<Context>) {
+  const userId = ctx.from?.id;
+
+  if (!userId) {
+    ctx.reply("Please do /generate again");
+    return;
+  }
+
+  const keyboard = new InlineKeyboard()
+    .text("Utility", "shillText-mode-utility")
+    .text("Meme", "shillText-mode-meme");
+
+  ctx.deleteMessage();
+
+  const text = `The bot has two modes to generate shill text in, a utility mode and a meme mode. 
+    
+Utility mode focuses more on the token description you provide, while the meme mode focuses more on making the text catchy to the eye.`;
+
+  ctx.reply(text, {
+    reply_markup: keyboard,
+  });
+}
+
 export async function shillTextStep1(ctx: CommandContext<Context>) {
   const userId = ctx.from?.id;
 
@@ -20,6 +43,7 @@ export async function shillTextStep1(ctx: CommandContext<Context>) {
     .text("Telegram", "shillText-platform-telegram");
 
   userState[userId] = "shill-step-2";
+  ctx.deleteMessage();
 
   ctx.reply("Select the platform you want to generate the text for", {
     reply_markup: keyboard,
@@ -51,7 +75,7 @@ export async function shillTextStep3(ctx: CommandContext<Context>) {
   userState[userId] = "shillText-description";
 
   ctx.reply(
-    "Describe your project in the next message. This description would be used to generate your shill text."
+    "Describe your project in the next message. This description would be used to generate your shill text so make sure that the description is in a similar tone to how you'd want the shill text to be in. Include relevant information regarding your project for it to be more utilitarian."
   );
 }
 
@@ -65,9 +89,14 @@ export async function generateShillText(ctx: CommandContext<Context>) {
   }
 
   delete userState[userId];
-  const { platform, name, description } = userShillTextData;
+  const { platform, name, description, mode } = userShillTextData;
 
-  const prompt = `Generate a shill text for a project with name - "${name}". The text is for ${platform} so should fit the style and word limit. Use and modify the description below to generate it. Description - ${description}`;
+  const instructions =
+    mode === "utility"
+      ? "Focus more on the description of the token and its tokenomics rather than making it a generic shill text."
+      : "Use lots of emojis, hashtags, and modern slangs to fit a meme like tone.";
+
+  const prompt = `Generate a shill text for a project with name - "${name}". The text is for ${platform} so should fit the style and word limit. Use and modify the description below to generate it. ${instructions}. Description - ${description}`;
 
   const generationMsg = await ctx.reply("Generating shill text...");
 
