@@ -20,13 +20,14 @@ export async function sendTransaction(
 ) {
   try {
     const wallet = new ethers.Wallet(secretKey, provider);
-    const valueAfterGas = amount - gasLimit;
     const gasPrice = await web3.eth.getGasPrice();
+    const valueAfterGas = amount - gasLimit * Number(gasPrice);
 
     const tx = await wallet.sendTransaction({
       to: to,
       value: valueAfterGas,
-      gasLimit: gasLimit * Number(gasPrice),
+      gasPrice: gasPrice,
+      gasLimit: gasLimit,
     });
 
     return tx;

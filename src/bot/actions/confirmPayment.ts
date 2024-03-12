@@ -13,9 +13,8 @@ import {
   subscriptionTiers,
 } from "@/vars/subscribers";
 import { splitPayment } from "@/utils/web3";
-import { cleanUpBotMessage, hardCleanUpBotMessage } from "@/utils/bot";
-import { teleBot } from "@/index";
-import { getRandomNumber, replicate } from "@/utils/general";
+import { cleanUpBotMessage } from "@/utils/bot";
+import { replicate } from "@/utils/general";
 import { web3 } from "@/rpc";
 
 export async function confirmPayment(ctx: CallbackQueryContext<Context>) {
@@ -49,7 +48,7 @@ export async function confirmPayment(ctx: CallbackQueryContext<Context>) {
       );
     }
 
-    const { paidAt, paidTo, tier, user, renewalTier } = subscriberData;
+    const { paidAt, paidTo, tier } = subscriberData;
     const selectedTier = subscriptionTiers[tier];
     const timeSpent = getSecondsElapsed(paidAt.seconds);
 
@@ -79,7 +78,7 @@ export async function confirmPayment(ctx: CallbackQueryContext<Context>) {
     const secretKey = decrypt(encryptedSecretKey);
     const account = web3.eth.accounts.privateKeyToAccount(secretKey);
 
-    const text = `Checking for payment of \`${selectedTier.amount}\` SOL for payment hash \`${hash}\`. You'd be notified as soon as the payment is confirmed.`;
+    const text = `Checking for payment of \`${selectedTier.amount}\` ETH for payment hash \`${hash}\`. You'd be notified as soon as the payment is confirmed.`;
     const confirmingMessage = await ctx.reply(cleanUpBotMessage(text), {
       parse_mode: "MarkdownV2",
     });
@@ -99,7 +98,7 @@ export async function confirmPayment(ctx: CallbackQueryContext<Context>) {
           continue attemptsCheck;
         }
 
-        const logText = `Transaction ${hash} for trend verified with payment of ${selectedTier.amount} SOL`;
+        const logText = `Transaction ${hash} for trend verified with payment of ${selectedTier.amount} ETH`;
         log(logText);
         const currentTimestamp = Timestamp.now();
 
@@ -147,7 +146,7 @@ export async function confirmPayment(ctx: CallbackQueryContext<Context>) {
 
         const confirmationText = `Confirmed payment of \`${cleanUpBotMessage(
           selectedTier.amount
-        )}\` SOL for a subscription of ${cleanUpBotMessage(
+        )}\` ETH for a subscription of ${cleanUpBotMessage(
           selectedTier.text
         )}\\. Your payment hash was \`${hash}\`\\.`;
 
@@ -157,6 +156,12 @@ export async function confirmPayment(ctx: CallbackQueryContext<Context>) {
             ctx.reply(confirmationText, {
               parse_mode: "MarkdownV2",
             });
+          })
+          .then(() => {
+            ctx.deleteMessage().catch((e) => errorHandler(e));
+            ctx
+              .deleteMessages([confirmingMessage.message_id])
+              .catch((e) => errorHandler(e));
           })
           .catch((e) => errorHandler(e));
 

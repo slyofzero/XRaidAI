@@ -21,7 +21,7 @@ export async function subscription(ctx: CommandContext<Context>) {
       for (const tier in subscriptionTiers) {
         const { text, amount } = subscriptionTiers[tier];
         keyboard = keyboard
-          .text(`${text} ${amount} SOL`, `subscription-subscribe-${tier}`)
+          .text(`${text} ${amount} ETH`, `subscription-subscribe-${tier}`)
           .row();
       }
 
