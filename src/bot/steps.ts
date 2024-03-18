@@ -4,6 +4,7 @@ import {
   shillTextStep1,
   shillTextStep2,
   shillTextStep3,
+  shillTextStep4,
 } from "./commands/shillText";
 import { prepareSubscription } from "./actions/prepareSubscription";
 import { confirmPayment } from "./actions/confirmPayment";
@@ -22,7 +23,8 @@ export const steps: { [key: string]: Steps } = {
     mode: shillTextStep1,
     platform: shillTextStep2,
     name: shillTextStep3,
-    description: generateShillText,
+    description: shillTextStep4,
+    socials: generateShillText,
   },
   meme: {
     description: memeStep1,

@@ -1,5 +1,5 @@
 import { openai } from "@/index";
-import { log } from "@/utils/handlers";
+import { errorHandler, log } from "@/utils/handlers";
 import { memeData } from "@/vars/memeData";
 import { userState } from "@/vars/userState";
 import { CommandContext, Context } from "grammy";
@@ -12,7 +12,7 @@ export async function memeStep0(ctx: CommandContext<Context>) {
     return;
   }
 
-  ctx.deleteMessage();
+  ctx.deleteMessage().catch((e) => errorHandler(e));
 
   const text = `Please provide a description of what the meme should be based on with the items it should have in what order. The more descriptive your meme is the better results at getting what you wanted.`;
   userState[userId] = "meme-description";

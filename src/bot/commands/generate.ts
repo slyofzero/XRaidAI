@@ -10,7 +10,7 @@ export async function generate(ctx: CommandContext<Context>) {
 
   const keyboard = new InlineKeyboard()
     .text("Shill text", "generate-shillText")
-    .text("Meme", "generate-meme");
+    .text("Meme (Image)", "generate-meme");
 
   const text = `Select what you want to generate using the bot.
   

@@ -10,3 +10,6 @@ export const splitPaymentsWith: {
     share: 1,
   },
 };
+
+export const urlRegex =
+  /^(?:https?|ftp):\/\/(?:www\.)?[\w-]+\.[a-z]{2,}(?:\/[\w-]*)*\/?(?:\?[^#\s]*)?$/;
