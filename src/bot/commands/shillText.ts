@@ -125,12 +125,12 @@ export async function generateShillText(ctx: CommandContext<Context>) {
       ? "Focus more on the description of the token and its tokenomics rather than making it a generic shill text."
       : "Use lots of emojis, hashtags, and modern slangs to fit a meme like tone.";
 
-  let prompt = `Generate 5 shill texts in first person with atleast 250 characters for a project with name - "${name}". AVOID MARKDOWN. Use and modify the description below to generate it. ${instructions}. Expression - ${description}.`;
+  let prompt = `Generate 5 shill texts in first person with atleast 250 characters for a project with name - "${name}". ${instructions}. Expression - ${description}.`;
 
   const conversationUserPrompt = prompt;
 
   if (socialsData) {
-    prompt += ` The project's ${socialType} has the following description in it - ${socialsData}. Use it too but only the relevant bits and also include the socials link ${socials} in the text. In the shill text don't mention that you got additional data from the ${socialType}.`;
+    prompt += ` The project's ${socialType} has the following description, use and modify the description below to generate it. ${socialsData}. Use it too but only the relevant bits and also include the socials link ${socials} in the text but just type the links in the text itself, don't use markdown for them. In the shill text don't mention that you got additional data from the ${socialType}.`;
   }
 
   const generationMsg = await ctx.reply("Generating shill text...");

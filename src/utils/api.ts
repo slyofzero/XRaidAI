@@ -29,7 +29,8 @@ export async function getChannelDescription(channelUsername: string) {
     const data = await response.json();
 
     if (data.ok) {
-      return data.result.description;
+      const { title, description } = data.result;
+      return `${description}\nTitle - ${title}`;
     } else {
       throw new Error(data.description);
     }
