@@ -5,6 +5,10 @@ export async function startBot(ctx: CommandContext<Context>) {
 
 I'm your go-to bot for generating the coolest shill texts and memes using AI. Ready to take your content game to the next level? You're in the right place!
 
-Just type /generate to get started, steps after that are rather self explanatory. Let's make some noise and spread the hype with XRaid AI!`;
+/generate - To generate shill texts
+/setinfo - To set information about your project which would help in generating shill texts in bulk (only for channel and groups)
+
+Add the bot as an admin in your channel or group and you're good to go!`;
+
   ctx.reply(text, { parse_mode: "Markdown" });
 }

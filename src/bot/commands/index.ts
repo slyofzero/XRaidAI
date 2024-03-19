@@ -7,6 +7,7 @@ import { subscription } from "../subscription";
 import { generate } from "./generate";
 import { conversations } from "@/vars/conversations";
 import { chatActionInterval } from "@/utils/constants";
+import { setInfo } from "./setInfo";
 
 export function initiateBotCommands() {
   teleBot.api.setMyCommands([
@@ -16,19 +17,27 @@ export function initiateBotCommands() {
       description: "To start a new dialog to generate a shill text or a meme",
     },
     { command: "subscribe", description: "To subscribe to the bot" },
+    {
+      command: "setinfo",
+      description:
+        "To set the info about your project for the bot. Using this info the bot can generate shill text in bulk.",
+    },
   ]);
 
   teleBot.command("start", (ctx) => startBot(ctx));
   teleBot.command("generate", async (ctx) => generate(ctx));
   teleBot.command("subscribe", (ctx) => subscription(ctx));
+  teleBot.command("setinfo", (ctx) => setInfo(ctx));
 
   teleBot.on(":text", async (ctx) => {
-    const userId = ctx.from?.id;
-    if (!userId) return false;
+    const chatId = ctx.chat.id;
+    if (!chatId) return false;
 
-    const [category, type] = userState[userId]?.split("-") || [];
-    const value = ctx.message?.text || "";
-    const userConversation = conversations[userId];
+    const [category, type] = userState[chatId]?.split("-") || [];
+
+    const value =
+      ctx.message?.text || ctx.channelPost?.text || ctx.update.message?.text;
+    const userConversation = conversations[chatId];
 
     if (userConversation && userConversation.length && value) {
       userConversation.push({ role: "user", content: value });
@@ -58,9 +67,9 @@ export function initiateBotCommands() {
       }
 
       clearInterval(typingInterval);
-      log(`User ${userId} did - ${value}`);
+      log(`Chat ${chatId} did - ${value}`);
     } else if (value) {
-      executeStep(category, type, value, userId, ctx);
+      executeStep(category, type, value, chatId, ctx);
     }
   });
 

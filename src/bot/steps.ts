@@ -8,6 +8,12 @@ import {
 import { prepareSubscription } from "./actions/prepareSubscription";
 import { confirmPayment } from "./actions/confirmPayment";
 import { generateMeme, memeStep0, memeStep1, memeStep2 } from "./commands/meme";
+import {
+  confirmInfo,
+  infoStep1,
+  infoStep2,
+  infoStep3,
+} from "./commands/setInfo";
 
 interface Steps {
   [key: string]: (ctx: any) => Promise<any>;
@@ -32,5 +38,11 @@ export const steps: { [key: string]: Steps } = {
   subscription: {
     subscribe: prepareSubscription,
     payment: confirmPayment,
+  },
+  info: {
+    tone: infoStep1,
+    name: infoStep2,
+    description: infoStep3,
+    socials: confirmInfo,
   },
 };

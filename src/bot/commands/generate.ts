@@ -1,12 +1,19 @@
 import { conversations } from "@/vars/conversations";
 import { CommandContext, Context, InlineKeyboard } from "grammy";
+import { generateChannelShillText } from "./shillText";
 
 export async function generate(ctx: CommandContext<Context>) {
-  const userId = ctx.from?.id;
+  const { id: userId, type } = ctx.chat;
 
   if (!userId) {
     ctx.reply("Please do /generate again");
     return;
+  } else if (type === "channel" || type === "supergroup") {
+    return generateChannelShillText(ctx);
+  } else if (type === "group") {
+    return ctx.reply(
+      "To do /generate please make the bot an admin first and give it all permissions. This would allow the bot to read any new message in the group and reply to it if it needs to."
+    );
   }
 
   delete conversations[userId];

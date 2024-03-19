@@ -3,6 +3,7 @@ import { initiateBotCommands, initiateCallbackQueries } from "./bot";
 import { log } from "./utils/handlers";
 import { BOT_TOKEN, OPEN_AI_KEY } from "./utils/env";
 import { OpenAI } from "openai";
+import { syncProjectInfo } from "./vars/info";
 
 export const teleBot = new Bot(BOT_TOKEN || "");
 log("Bot instance ready");
@@ -21,4 +22,6 @@ export const openai = new OpenAI({
   log("Telegram bot setup");
   initiateBotCommands();
   initiateCallbackQueries();
+
+  await Promise.all([syncProjectInfo()]);
 })();

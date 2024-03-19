@@ -4,6 +4,7 @@ import { splitIntoRandomChunks } from "@/utils/bot";
 import { chatActionInterval, urlRegex } from "@/utils/constants";
 import { errorHandler, log } from "@/utils/handlers";
 import { conversations } from "@/vars/conversations";
+import { storedProjectInfos } from "@/vars/info";
 import { shillTextData } from "@/vars/shillText";
 import { userState } from "@/vars/userState";
 import { CommandContext, Context, InlineKeyboard } from "grammy";
@@ -165,6 +166,66 @@ export async function generateShillText(ctx: CommandContext<Context>) {
         continue;
       }
     }
+  }
+
+  clearInterval(typingInterval);
+  log(`Generated shill text on ${name} for ${userId}`);
+}
+
+export async function generateChannelShillText(ctx: CommandContext<Context>) {
+  const userId = ctx.chat.id;
+  const projectInfo = storedProjectInfos
+    .filter(({ chatId }) => chatId === userId)
+    .at(0);
+
+  if (!projectInfo) {
+    ctx.reply(
+      "Please do /setinfo and set some information about your project. This information would be used each time you do /generate so is a one time task."
+    );
+    return;
+  }
+
+  delete userState[userId];
+  const { name, description, tone, socials } = projectInfo;
+
+  let socialsData = "";
+  let socialType: "telegram" | "website" = "website";
+
+  if (urlRegex.test(socials || "")) {
+    if (socials?.startsWith("https://t.me")) {
+      const channelUsername = socials.replace("https://t.me/", "");
+      socialsData = await getChannelDescription(channelUsername);
+      socialType = "telegram";
+    } else if (socials) {
+      socialsData = await fetchAndExtract(socials);
+    }
+  }
+
+  let prompt = `Generate 8 shill texts in first person with atleast 250 characters for a project with name - "${name}", in the tone - ${tone}. Description - ${description}. Focus more on the relevant information.`;
+
+  if (socialsData) {
+    prompt += ` The project's ${socialType} has the following description, use and modify the description below to generate it. ${socialsData}. Use it too but only the relevant bits and also include the socials link ${socials} in the text but just type the links in the text itself, don't use markdown for them. In the shill text don't mention that you got additional data from the ${socialType}.`;
+  }
+
+  const generationMsg = await ctx.reply(
+    "Generating shill text, please wait a few moments..."
+  );
+  const typingInterval = setInterval(() => {
+    ctx.api.sendChatAction(ctx.chat.id, "typing");
+  }, chatActionInterval);
+
+  const chatCompletion = await openai.chat.completions.create({
+    messages: [{ role: "user", content: prompt }],
+    model: "gpt-4-turbo-preview",
+  });
+
+  for (const choice of chatCompletion.choices) {
+    const shillText = choice.message.content || "";
+    await ctx.api.editMessageText(
+      ctx.chat.id,
+      generationMsg.message_id,
+      shillText
+    );
   }
 
   clearInterval(typingInterval);
