@@ -71,3 +71,19 @@ export function executeStep(
     }
   }
 }
+
+export function splitIntoRandomChunks(text: string) {
+  const words = text.split(" ");
+  const chunks = [];
+  let currentIndex = 0;
+
+  while (currentIndex < words.length) {
+    // Randomly choose a chunk size between 3 and 9
+    const chunkSize = Math.floor(Math.random() * 10) + 5;
+    const chunk = words.slice(currentIndex, currentIndex + chunkSize).join(" ");
+    chunks.push(chunk);
+    currentIndex += chunkSize;
+  }
+
+  return chunks;
+}

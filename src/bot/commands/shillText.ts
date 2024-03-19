@@ -1,7 +1,9 @@
 import { openai } from "@/index";
 import { fetchAndExtract, getChannelDescription } from "@/utils/api";
-import { urlRegex } from "@/utils/constants";
+import { splitIntoRandomChunks } from "@/utils/bot";
+import { chatActionInterval, urlRegex } from "@/utils/constants";
 import { errorHandler, log } from "@/utils/handlers";
+import { conversations } from "@/vars/conversations";
 import { shillTextData } from "@/vars/shillText";
 import { userState } from "@/vars/userState";
 import { CommandContext, Context, InlineKeyboard } from "grammy";
@@ -75,10 +77,7 @@ export async function shillTextStep3(ctx: CommandContext<Context>) {
   }
 
   userState[userId] = "shillText-description";
-
-  ctx.reply(
-    "Describe your project in the next message. This description would be used to generate your shill text so make sure that the description is in a similar tone to how you'd want the shill text to be in. Include relevant information regarding your project for it to be more utilitarian."
-  );
+  ctx.reply("Any custom expression you want the shill text to have?");
 }
 
 export async function shillTextStep4(ctx: CommandContext<Context>) {
@@ -92,7 +91,7 @@ export async function shillTextStep4(ctx: CommandContext<Context>) {
   userState[userId] = "shillText-socials";
 
   ctx.reply(
-    '(Optional Step)\n\nDoes your project have any website or telegram channel? If so please pass the link to it in the next message. The bot would scan through the website or channel to pick out relevant information that can be used in the shill text.\n\nIf your project doesn\'t have any socials, just type "None" in the next message.'
+    'Does your project have any website or telegram channel? If so please pass the link to it in the next message. The bot would scan through the website or channel to pick out relevant information that can be used in the shill text.\n\nIf your project doesn\'t have any socials, just type "None" in the next message.'
   );
 }
 
@@ -106,7 +105,7 @@ export async function generateShillText(ctx: CommandContext<Context>) {
   }
 
   delete userState[userId];
-  const { platform, name, description, mode, socials } = userShillTextData;
+  const { name, description, mode, socials } = userShillTextData;
 
   let socialsData = "";
   let socialType: "telegram" | "website" = "website";
@@ -126,27 +125,48 @@ export async function generateShillText(ctx: CommandContext<Context>) {
       ? "Focus more on the description of the token and its tokenomics rather than making it a generic shill text."
       : "Use lots of emojis, hashtags, and modern slangs to fit a meme like tone.";
 
-  let prompt = `Generate a shill text in first person for a project with name - "${name}". The text is for ${platform} so should fit the style and word limit. AVOID MARKDOWN. Use and modify the description below to generate it. ${instructions}. Description - ${description}.`;
+  let prompt = `Generate 5 shill texts in first person with atleast 250 characters for a project with name - "${name}". AVOID MARKDOWN. Use and modify the description below to generate it. ${instructions}. Expression - ${description}.`;
+
+  const conversationUserPrompt = prompt;
 
   if (socialsData) {
     prompt += ` The project's ${socialType} has the following description in it - ${socialsData}. Use it too but only the relevant bits and also include the socials link ${socials} in the text. In the shill text don't mention that you got additional data from the ${socialType}.`;
   }
 
   const generationMsg = await ctx.reply("Generating shill text...");
+  const typingInterval = setInterval(() => {
+    ctx.api.sendChatAction(ctx.chat.id, "typing");
+  }, chatActionInterval);
+
+  conversations[userId] = [{ role: "user", content: conversationUserPrompt }];
+  const userConversation = conversations[userId];
 
   const chatCompletion = await openai.chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "gpt-3.5-turbo",
+    model: "gpt-4-0125-preview",
   });
 
   for (const choice of chatCompletion.choices) {
-    const shillText = choice.message.content;
-    if (shillText) ctx.reply(shillText);
-    else {
-      ctx.reply("Error in generating shill text");
-      log(`Error in generating shill text - ${JSON.stringify(chatCompletion)}`);
-    }
+    const shillText = choice.message.content || "";
 
-    ctx.deleteMessages([generationMsg.message_id]);
+    const botReplyChunks = splitIntoRandomChunks(shillText);
+    let replyText = "";
+
+    for (const chunk of botReplyChunks) {
+      replyText += ` ${chunk}`;
+      try {
+        await ctx.api.editMessageText(
+          ctx.chat.id,
+          generationMsg.message_id,
+          replyText
+        );
+        userConversation.push({ role: "assistant", content: replyText });
+      } catch (error) {
+        continue;
+      }
+    }
   }
+
+  clearInterval(typingInterval);
+  log(`Generated shill text on ${name} for ${userId}`);
 }

@@ -1,3 +1,4 @@
+import { conversations } from "@/vars/conversations";
 import { CommandContext, Context, InlineKeyboard } from "grammy";
 
 export async function generate(ctx: CommandContext<Context>) {
@@ -8,6 +9,7 @@ export async function generate(ctx: CommandContext<Context>) {
     return;
   }
 
+  delete conversations[userId];
   const keyboard = new InlineKeyboard()
     .text("Shill text", "generate-shillText")
     .text("Meme (Image)", "generate-meme");

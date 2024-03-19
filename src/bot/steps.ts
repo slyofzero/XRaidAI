@@ -1,7 +1,6 @@
 import {
   generateShillText,
   shillTextStep0,
-  shillTextStep1,
   shillTextStep2,
   shillTextStep3,
   shillTextStep4,
@@ -20,8 +19,7 @@ export const steps: { [key: string]: Steps } = {
     meme: memeStep0,
   },
   shillText: {
-    mode: shillTextStep1,
-    platform: shillTextStep2,
+    mode: shillTextStep2,
     name: shillTextStep3,
     description: shillTextStep4,
     socials: generateShillText,

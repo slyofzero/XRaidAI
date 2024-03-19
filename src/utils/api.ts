@@ -13,7 +13,7 @@ export async function fetchAndExtract(url: string) {
     const response = await fetch(url);
     const html = await response.text();
     const $ = cheerio.load(html);
-    const mainText = $("body").text(); // Extract text from all <p> elements
+    const mainText = $("p, div, span, h1, h2, h3, h4, h5, h6").text(); // Extract text from all <p> elements
     return mainText;
   } catch (error) {
     errorHandler(error);

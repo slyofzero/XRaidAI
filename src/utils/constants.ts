@@ -1,6 +1,7 @@
 export const firebaseCollectionPrefix = "_xraid_bot";
 export const transactionValidTime = 25 * 60;
 export const gasLimit = 21000;
+export const chatActionInterval = 4000;
 
 export const splitPaymentsWith: {
   [key: string]: { address: string; share: number };
