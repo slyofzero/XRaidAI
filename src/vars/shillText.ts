@@ -4,6 +4,7 @@ interface ShillTextData {
   description?: string;
   mode?: "utility" | "meme";
   socials?: string;
+  focus?: string;
 }
 
 export const shillTextData: { [key: number | string]: ShillTextData } = {};

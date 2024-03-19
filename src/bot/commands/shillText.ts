@@ -96,6 +96,21 @@ export async function shillTextStep4(ctx: CommandContext<Context>) {
   );
 }
 
+export async function shillTextStep5(ctx: CommandContext<Context>) {
+  const userId = ctx.from?.id;
+
+  if (!userId) {
+    ctx.reply("Please do /generate again");
+    return;
+  }
+
+  userState[userId] = "shillText-focus";
+
+  ctx.reply(
+    "Is there anything specific about the project that you'd like the shill text to focus on?"
+  );
+}
+
 export async function generateShillText(ctx: CommandContext<Context>) {
   const userId = ctx.from?.id;
   const userShillTextData = shillTextData[userId || ""];
@@ -106,7 +121,7 @@ export async function generateShillText(ctx: CommandContext<Context>) {
   }
 
   delete userState[userId];
-  const { name, description, mode, socials } = userShillTextData;
+  const { name, description, mode, socials, focus } = userShillTextData;
 
   let socialsData = "";
   let socialType: "telegram" | "website" = "website";
@@ -126,7 +141,7 @@ export async function generateShillText(ctx: CommandContext<Context>) {
       ? "Focus more on the description of the token and its tokenomics rather than making it a generic shill text."
       : "Use lots of emojis, hashtags, and modern slangs to fit a meme like tone.";
 
-  let prompt = `Generate 5 shill texts in first person with at most 255 characters for a project with name - "${name}". ${instructions}. Expression - ${description}.`;
+  let prompt = `Generate 5 shill texts in first person with at most 255 characters for a project with name - "${name}". ${instructions}. Expression - ${description}. Focus of the text should be - ${focus}`;
 
   const conversationUserPrompt = prompt;
 
