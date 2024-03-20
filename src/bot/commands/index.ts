@@ -40,14 +40,11 @@ export function initiateBotCommands() {
   teleBot.command("setinfo", (ctx) => setInfo(ctx));
 
   teleBot.on(":text", async (ctx) => {
-    const threadId = ctx.message?.message_thread_id;
     const chatId = ctx.chat.id;
     if (!chatId) return false;
 
-    if (threadId) {
-      // @ts-expect-error Weird type
-      variateChannelShillText(ctx);
-    }
+    // @ts-expect-error Weird type
+    variateChannelShillText(ctx);
 
     const [category, type] = userState[chatId]?.split("-") || [];
 

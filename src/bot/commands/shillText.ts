@@ -275,11 +275,13 @@ export async function generateChannelShillText(
 }
 
 export async function variateChannelShillText(ctx: CommandContext<Context>) {
-  const threadId = ctx.message?.message_thread_id;
+  const threadId =
+    ctx.message?.message_thread_id ||
+    ctx.channelPost?.reply_to_message?.message_id;
   const chatId = ctx.chat.id;
   if (!chatId || !threadId) return false;
 
-  const prevText = botGroupReplies[chatId][threadId];
+  const prevText = botGroupReplies[chatId]?.[threadId];
   if (prevText) {
     generateChannelShillText(ctx, prevText.text);
   }
