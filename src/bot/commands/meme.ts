@@ -54,19 +54,25 @@ export async function memeStep2(ctx: CommandContext<Context>) {
   ctx.reply(text);
 }
 
-export async function generateMeme(ctx: CommandContext<Context>) {
+export async function generateMeme(
+  ctx: CommandContext<Context>,
+  manualPrompt?: string
+) {
   const userId = ctx.from?.id;
   const userMemeData = memeData[userId || ""];
 
-  if (!userId || !userMemeData) {
+  let prompt = "";
+
+  if (manualPrompt) {
+    prompt = manualPrompt;
+  } else if (userId && userMemeData) {
+    delete userState[userId];
+    const { description, style } = userMemeData;
+    prompt = `${description} ${style}`;
+  } else {
     ctx.reply("Please do /generate again");
     return;
   }
-
-  delete userState[userId];
-  const { description, style } = userMemeData;
-
-  const prompt = `${description} ${style}`;
 
   const generatingMsg = await ctx.reply("Generating a meme...");
   const typingInterval = setInterval(() => {
@@ -86,7 +92,7 @@ export async function generateMeme(ctx: CommandContext<Context>) {
       const imageFile = new InputFile(imageFilePath);
       await ctx.replyWithPhoto(imageFile);
 
-      memeConversations[userId] = imageFilePath;
+      if (userId) memeConversations[userId] = imageFilePath;
     }
   } else {
     return ctx.reply("There was an error in generating your meme");
@@ -96,7 +102,9 @@ export async function generateMeme(ctx: CommandContext<Context>) {
   clearInterval(typingInterval);
   log(`Generated image for ${userId}`);
 
-  ctx.reply(
-    "If you want a variation of this image, you can type in another prompt. Although keep in mind that your variation description should be rather descriptive. Do not omit any details you want in the image."
-  );
+  if (!manualPrompt) {
+    ctx.reply(
+      "If you want a variation of this image, you can type in another prompt. Although keep in mind that your variation description should be rather descriptive. Do not omit any details you want in the image."
+    );
+  }
 }

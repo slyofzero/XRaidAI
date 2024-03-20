@@ -10,6 +10,8 @@ import { chatActionInterval } from "@/utils/constants";
 import { setInfo } from "./setInfo";
 import { Status, VariationStyle } from "imaginesdk";
 import { InputFile } from "grammy";
+import { variateChannelShillText } from "./shillText";
+import { generateMemeCommand } from "./generateMeme";
 
 export function initiateBotCommands() {
   teleBot.api.setMyCommands([
@@ -17,6 +19,11 @@ export function initiateBotCommands() {
     {
       command: "generate",
       description: "To start a new dialog to generate a shill text or a meme",
+    },
+    {
+      command: "generatememe",
+      description:
+        "To generate a meme based on a prompt (only for channels and groups)",
     },
     { command: "subscribe", description: "To subscribe to the bot" },
     {
@@ -28,12 +35,19 @@ export function initiateBotCommands() {
 
   teleBot.command("start", (ctx) => startBot(ctx));
   teleBot.command("generate", async (ctx) => generate(ctx));
+  teleBot.command("generatememe", async (ctx) => generateMemeCommand(ctx));
   teleBot.command("subscribe", (ctx) => subscription(ctx));
   teleBot.command("setinfo", (ctx) => setInfo(ctx));
 
   teleBot.on(":text", async (ctx) => {
+    const threadId = ctx.message?.message_thread_id;
     const chatId = ctx.chat.id;
     if (!chatId) return false;
+
+    if (threadId) {
+      // @ts-expect-error Weird type
+      variateChannelShillText(ctx);
+    }
 
     const [category, type] = userState[chatId]?.split("-") || [];
 

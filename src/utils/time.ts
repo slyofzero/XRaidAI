@@ -9,3 +9,7 @@ export function sleep(ms: number) {
 export function getSecondsElapsed(timestamp: number) {
   return Math.floor(new Date().getTime() / 1e3) - timestamp;
 }
+
+export function getNowTimestamp() {
+  return Math.floor(Date.now() / 1000);
+}
