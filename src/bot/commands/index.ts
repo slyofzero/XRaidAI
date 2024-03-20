@@ -2,7 +2,11 @@ import { imagine, openai, teleBot } from "@/index";
 import { startBot } from "./start";
 import { log } from "@/utils/handlers";
 import { userState } from "@/vars/userState";
-import { executeStep, splitIntoRandomChunks } from "@/utils/bot";
+import {
+  checkProjectMember,
+  executeStep,
+  splitIntoRandomChunks,
+} from "@/utils/bot";
 import { subscription } from "../subscription";
 import { generate } from "./generate";
 import { conversations, memeConversations } from "@/vars/conversations";
@@ -40,7 +44,11 @@ export function initiateBotCommands() {
   teleBot.command("setinfo", (ctx) => setInfo(ctx));
 
   teleBot.on(":text", async (ctx) => {
-    const chatId = ctx.chat.id;
+    // @ts-expect-error Weird type
+    const isMember = await checkProjectMember(ctx);
+    if (!isMember) return false;
+
+    const { id: chatId } = ctx.chat;
     if (!chatId) return false;
 
     // @ts-expect-error Weird type

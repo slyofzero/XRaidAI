@@ -1,4 +1,5 @@
 import { addDocument } from "@/firebase";
+import { checkProjectMember } from "@/utils/bot";
 import { urlRegex } from "@/utils/constants";
 import { errorHandler } from "@/utils/handlers";
 import { projectInfos, syncProjectInfo } from "@/vars/info";
@@ -6,6 +7,9 @@ import { userState } from "@/vars/userState";
 import { CommandContext, Context } from "grammy";
 
 export async function setInfo(ctx: CommandContext<Context>) {
+  const isMember = await checkProjectMember(ctx);
+  if (!isMember) return false;
+
   const { type, id } = ctx.chat;
 
   if (type === "private") {

@@ -8,6 +8,7 @@ declare global {
       RPC_URL: string | undefined;
       FIREBASE_KEY: string | undefined;
       IMAGE_API_KEY: string | undefined;
+      XRAID_PROJECT_ID: string | undefined;
     }
   }
 }

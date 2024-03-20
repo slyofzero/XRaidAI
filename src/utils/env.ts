@@ -9,4 +9,5 @@ export const {
   FIREBASE_KEY,
   ENCRYPTION_KEY,
   IMAGE_API_KEY,
+  XRAID_PROJECT_ID,
 } = process.env;

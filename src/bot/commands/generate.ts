@@ -3,8 +3,12 @@ import { CommandContext, Context, InlineKeyboard } from "grammy";
 import { generateChannelShillText } from "./shillText";
 import fs from "fs/promises";
 import { errorHandler } from "@/utils/handlers";
+import { checkProjectMember } from "@/utils/bot";
 
 export async function generate(ctx: CommandContext<Context>) {
+  const isMember = await checkProjectMember(ctx);
+  if (!isMember) return false;
+
   const { id: userId, type } = ctx.chat;
 
   if (!userId) {

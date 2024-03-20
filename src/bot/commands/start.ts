@@ -1,6 +1,10 @@
+import { checkProjectMember } from "@/utils/bot";
 import { CommandContext, Context } from "grammy";
 
 export async function startBot(ctx: CommandContext<Context>) {
+  const isMember = await checkProjectMember(ctx);
+  if (!isMember) return false;
+
   const text = `🎉 *Welcome to XRaid AI!* 🎉
 
 I'm your go-to bot for generating the coolest shill texts and memes using AI. Ready to take your content game to the next level? You're in the right place!

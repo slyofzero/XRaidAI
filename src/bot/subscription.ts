@@ -1,8 +1,12 @@
+import { checkProjectMember } from "@/utils/bot";
 import { errorHandler } from "@/utils/handlers";
 import { subscribers, subscriptionTiers } from "@/vars/subscribers";
 import { CommandContext, Context, InlineKeyboard } from "grammy";
 
 export async function subscription(ctx: CommandContext<Context>) {
+  const isMember = await checkProjectMember(ctx);
+  if (!isMember) return false;
+
   try {
     const from = ctx.from;
     if (!from) {

@@ -1,6 +1,10 @@
 import { steps } from "@/bot/steps";
 import { memeData } from "@/vars/memeData";
 import { shillTextData } from "@/vars/shillText";
+import { CommandContext, Context } from "grammy";
+import { XRAID_PROJECT_ID } from "./env";
+import { log } from "./handlers";
+import { teleBot } from "..";
 
 // eslint-disable-next-line
 export function cleanUpBotMessage(text: any) {
@@ -86,4 +90,35 @@ export function splitIntoRandomChunks(text: string) {
   }
 
   return chunks;
+}
+
+export async function checkProjectMember(ctx: CommandContext<Context>) {
+  try {
+    if (!XRAID_PROJECT_ID) {
+      return log("XRAID_PROJECT_ID is undefined");
+    }
+
+    const { type } = ctx.chat;
+    const userId = ctx.chat.id;
+
+    if (type === "private") {
+      const { status } = await teleBot.api.getChatMember(
+        XRAID_PROJECT_ID,
+        userId
+      );
+
+      const notMember =
+        status === "kicked" || status === "left" || status === "restricted";
+
+      if (notMember) {
+        throw Error("Not a member");
+      }
+    }
+    return true;
+  } catch (err) {
+    ctx.reply(
+      "To use this bot please join our XRaid Community group.\n\nPortal - https://t.me/XraidAiProject"
+    );
+    return false;
+  }
 }

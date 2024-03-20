@@ -1,7 +1,11 @@
 import { CommandContext, Context } from "grammy";
 import { generateMeme } from "./meme";
+import { checkProjectMember } from "@/utils/bot";
 
 export async function generateMemeCommand(ctx: CommandContext<Context>) {
+  const isMember = await checkProjectMember(ctx);
+  if (!isMember) return false;
+
   const { type } = ctx.chat;
   const { match } = ctx;
 
