@@ -18,7 +18,7 @@ export const openai = new OpenAI({
   apiKey: OPEN_AI_KEY,
 });
 
-export const imagine = client(IMAGE_API_KEY);
+export const imagine: any = client(IMAGE_API_KEY);
 
 (async function () {
   teleBot.start();
