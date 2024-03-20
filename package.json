@@ -34,6 +34,7 @@
     "ethers": "5.7",
     "firebase-admin": "^12.0.0",
     "grammy": "^1.20.3",
+    "imaginesdk": "^1.1.0",
     "moment": "^2.29.4",
     "nanoid": "3.3.7",
     "openai": "^4.26.1",

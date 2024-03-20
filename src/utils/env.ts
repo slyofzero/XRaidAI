@@ -8,4 +8,5 @@ export const {
   RPC_URL,
   FIREBASE_KEY,
   ENCRYPTION_KEY,
+  IMAGE_API_KEY,
 } = process.env;

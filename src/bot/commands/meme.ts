@@ -1,8 +1,12 @@
-import { openai } from "@/index";
+import { imagine } from "@/index";
 import { errorHandler, log } from "@/utils/handlers";
 import { memeData } from "@/vars/memeData";
 import { userState } from "@/vars/userState";
-import { CommandContext, Context } from "grammy";
+import { CommandContext, Context, InputFile } from "grammy";
+import { GenerationStyle, Status } from "imaginesdk";
+import { nanoid } from "nanoid";
+import fs from "fs/promises";
+import { chatActionInterval } from "@/utils/constants";
 
 export async function memeStep0(ctx: CommandContext<Context>) {
   const userId = ctx.from?.id;
@@ -14,7 +18,7 @@ export async function memeStep0(ctx: CommandContext<Context>) {
 
   ctx.deleteMessage().catch((e) => errorHandler(e));
 
-  const text = `Please provide a description of what the meme should be based on with the items it should have in what order. The more descriptive your meme is the better results at getting what you wanted.`;
+  const text = `Please provide a description of what the meme should be based on, with the items it should have in what order. The more descriptive your meme is the better results at getting what you wanted.`;
   userState[userId] = "meme-description";
 
   ctx.reply(text);
@@ -60,20 +64,37 @@ export async function generateMeme(ctx: CommandContext<Context>) {
   }
 
   delete userState[userId];
-  const { description, style, text } = userMemeData;
+  const { description, style } = userMemeData;
 
-  const prompt = `${description} in ${style} style with some bold text at the top or bottom of it saying ${text}`;
+  const prompt = `${description} ${style}`;
 
   const generatingMsg = await ctx.reply("Generating a meme...");
-  const image = await openai.images.generate({ model: "dall-e-3", prompt });
-  const imageUrl = image.data.at(0)?.url;
+  const typingInterval = setInterval(() => {
+    ctx.api.sendChatAction(ctx.chat.id, "typing");
+  }, chatActionInterval);
 
-  if (imageUrl) {
-    ctx.replyWithPhoto(imageUrl);
+  const response = await imagine.generations(prompt, {
+    style: GenerationStyle.IMAGINE_V5,
+  });
+
+  if (response.status() === Status.OK) {
+    const image = response.data();
+
+    if (image) {
+      const imageFilePath = `./temp/${nanoid(10)}.png`;
+      image.asFile(imageFilePath);
+      const imageFile = new InputFile(imageFilePath);
+      await ctx.replyWithPhoto(imageFile);
+
+      fs.unlink(imageFilePath).then(() =>
+        log(`File ${imageFilePath} deleted successfully`)
+      );
+    }
   } else {
-    ctx.reply("Your meme couldn't be generated, please do /generate again");
-    log(`Error in generating an image - ${JSON.stringify(image)}`);
+    return ctx.reply("There was an error in generating your meme");
   }
 
   ctx.deleteMessages([generatingMsg.message_id]);
+  clearInterval(typingInterval);
+  log(`Generated image for ${userId}`);
 }

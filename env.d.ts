@@ -7,6 +7,7 @@ declare global {
       ENCRYPTION_KEY: string | undefined;
       RPC_URL: string | undefined;
       FIREBASE_KEY: string | undefined;
+      IMAGE_API_KEY: string | undefined;
     }
   }
 }
