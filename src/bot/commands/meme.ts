@@ -3,10 +3,10 @@ import { errorHandler, log } from "@/utils/handlers";
 import { memeData } from "@/vars/memeData";
 import { userState } from "@/vars/userState";
 import { CommandContext, Context, InputFile } from "grammy";
-import { GenerationStyle, Status } from "imaginesdk";
+import { VariationStyle, Status } from "imaginesdk";
 import { nanoid } from "nanoid";
-import fs from "fs/promises";
 import { chatActionInterval } from "@/utils/constants";
+import { memeConversations } from "@/vars/conversations";
 
 export async function memeStep0(ctx: CommandContext<Context>) {
   const userId = ctx.from?.id;
@@ -74,7 +74,7 @@ export async function generateMeme(ctx: CommandContext<Context>) {
   }, chatActionInterval);
 
   const response = await imagine.generations(prompt, {
-    style: GenerationStyle.IMAGINE_V5,
+    style: VariationStyle.IMAGINE_V5,
   });
 
   if (response.status() === Status.OK) {
@@ -86,9 +86,7 @@ export async function generateMeme(ctx: CommandContext<Context>) {
       const imageFile = new InputFile(imageFilePath);
       await ctx.replyWithPhoto(imageFile);
 
-      fs.unlink(imageFilePath).then(() =>
-        log(`File ${imageFilePath} deleted successfully`)
-      );
+      memeConversations[userId] = imageFilePath;
     }
   } else {
     return ctx.reply("There was an error in generating your meme");
@@ -97,4 +95,8 @@ export async function generateMeme(ctx: CommandContext<Context>) {
   ctx.deleteMessages([generatingMsg.message_id]);
   clearInterval(typingInterval);
   log(`Generated image for ${userId}`);
+
+  ctx.reply(
+    "If you want a variation of this image, you can type in another prompt. Although keep in mind that your variation description should be rather descriptive. Do not omit any details you want in the image."
+  );
 }

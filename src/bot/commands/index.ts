@@ -1,13 +1,15 @@
-import { openai, teleBot } from "@/index";
+import { imagine, openai, teleBot } from "@/index";
 import { startBot } from "./start";
 import { log } from "@/utils/handlers";
 import { userState } from "@/vars/userState";
 import { executeStep, splitIntoRandomChunks } from "@/utils/bot";
 import { subscription } from "../subscription";
 import { generate } from "./generate";
-import { conversations } from "@/vars/conversations";
+import { conversations, memeConversations } from "@/vars/conversations";
 import { chatActionInterval } from "@/utils/constants";
 import { setInfo } from "./setInfo";
+import { Status, VariationStyle } from "imaginesdk";
+import { InputFile } from "grammy";
 
 export function initiateBotCommands() {
   teleBot.api.setMyCommands([
@@ -38,8 +40,11 @@ export function initiateBotCommands() {
     const value =
       ctx.message?.text || ctx.channelPost?.text || ctx.update.message?.text;
     const userConversation = conversations[chatId];
+    const generatedMeme = memeConversations[chatId];
 
-    if (userConversation && userConversation.length && value) {
+    if (!value) return false;
+
+    if (userConversation && userConversation.length) {
       userConversation.push({ role: "user", content: value });
 
       const typingInterval = setInterval(() => {
@@ -68,7 +73,34 @@ export function initiateBotCommands() {
 
       clearInterval(typingInterval);
       log(`Chat ${chatId} did - ${value}`);
-    } else if (value) {
+    } else if (generatedMeme) {
+      const generatingMsg = (await ctx.reply("Generating variation..."))
+        .message_id;
+
+      const typingInterval = setInterval(() => {
+        ctx.api.sendChatAction(ctx.chat.id, "typing");
+      }, chatActionInterval);
+
+      const response = await imagine.variations(value, generatedMeme, {
+        style: VariationStyle.IMAGINE_V5,
+      });
+
+      if (response.status() === Status.OK) {
+        const image = response.data();
+
+        if (image) {
+          image.asFile(generatedMeme);
+          const imageFile = new InputFile(generatedMeme);
+          await ctx.replyWithPhoto(imageFile);
+        }
+      } else {
+        return ctx.reply("There was an error in generating your meme");
+      }
+
+      clearInterval(typingInterval);
+      ctx.deleteMessages([generatingMsg]);
+      log(`Generated variation for ${chatId} - ${value}`);
+    } else {
       executeStep(category, type, value, chatId, ctx);
     }
   });

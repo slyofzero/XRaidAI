@@ -1,4 +1,4 @@
-import { conversations } from "@/vars/conversations";
+import { conversations, memeConversations } from "@/vars/conversations";
 import { CommandContext, Context, InlineKeyboard } from "grammy";
 import { generateChannelShillText } from "./shillText";
 
@@ -17,6 +17,8 @@ export async function generate(ctx: CommandContext<Context>) {
   }
 
   delete conversations[userId];
+  delete memeConversations[userId];
+
   const keyboard = new InlineKeyboard()
     .text("Shill text", "generate-shillText")
     .text("Meme (Image)", "generate-meme");
