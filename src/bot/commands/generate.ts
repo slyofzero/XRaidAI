@@ -1,6 +1,8 @@
 import { conversations, memeConversations } from "@/vars/conversations";
 import { CommandContext, Context, InlineKeyboard } from "grammy";
 import { generateChannelShillText } from "./shillText";
+import fs from "fs/promises";
+import { errorHandler } from "@/utils/handlers";
 
 export async function generate(ctx: CommandContext<Context>) {
   const { id: userId, type } = ctx.chat;
@@ -17,7 +19,10 @@ export async function generate(ctx: CommandContext<Context>) {
   }
 
   delete conversations[userId];
-  delete memeConversations[userId];
+  const generatedMeme = memeConversations[userId];
+  fs.unlink(generatedMeme)
+    .then(() => `Removed image ${generatedMeme}`)
+    .catch((e) => errorHandler(e));
 
   const keyboard = new InlineKeyboard()
     .text("Shill text", "generate-shillText")
