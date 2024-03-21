@@ -233,7 +233,7 @@ export async function generateChannelShillText(
     prompt = `Generate 8 shill texts in first person with at most 255 characters for a project with name - "${name}", in the tone - ${tone}. Description - ${description}. Focus more on the relevant information and include relevant hashtags.`;
   } else {
     const userRequest = ctx.message?.text;
-    prompt = `Previously you generated the below text - ${prevText}. Using this previous text for the following request - ${userRequest}.At most 255 characters per shill text.`;
+    prompt = `Previously you generated the below text - ${prevText}. Using this previous text for the following request - ${userRequest}.At most 255 characters per shill text. The shill texts should only be in first person.`;
   }
 
   if (socialsData) {
