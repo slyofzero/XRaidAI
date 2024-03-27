@@ -1,6 +1,7 @@
-interface BotGroupReply {
+export interface BotGroupReply {
   text: string;
   startTime: number;
+  focus: string;
 }
 
 export const botGroupReplies: {

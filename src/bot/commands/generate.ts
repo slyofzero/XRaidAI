@@ -7,15 +7,25 @@ import { checkProjectMember } from "@/utils/bot";
 
 export async function generate(ctx: CommandContext<Context>) {
   const isMember = await checkProjectMember(ctx);
+
   if (!isMember) return false;
 
   const { id: userId, type } = ctx.chat;
+  const { match } = ctx;
 
   if (!userId) {
     ctx.reply("Please do /generate again");
     return;
   } else if (type === "channel" || type === "supergroup") {
-    return generateChannelShillText(ctx);
+    if (!match) {
+      ctx.reply(
+        "To use this command please pass a prompt that tells the bot what to focus on.\n\nExample -\n/generate text should have an enthusiastic tone and go over the tokenomics"
+      );
+    } else {
+      generateChannelShillText(ctx);
+    }
+
+    return;
   } else if (type === "group") {
     return ctx.reply(
       "To do /generate please make the bot an admin first and give it all permissions. This would allow the bot to read any new message in the group and reply to it if it needs to."

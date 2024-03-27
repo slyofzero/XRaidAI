@@ -5,7 +5,7 @@ import { chatActionInterval, urlRegex } from "@/utils/constants";
 import { BOT_USERNAME } from "@/utils/env";
 import { errorHandler, log } from "@/utils/handlers";
 import { getNowTimestamp } from "@/utils/time";
-import { botGroupReplies } from "@/vars/botGroupReplies";
+import { BotGroupReply, botGroupReplies } from "@/vars/botGroupReplies";
 import { conversations } from "@/vars/conversations";
 import { storedProjectInfos } from "@/vars/info";
 import { shillTextData } from "@/vars/shillText";
@@ -197,7 +197,7 @@ export async function generateShillText(ctx: CommandContext<Context>) {
 
 export async function generateChannelShillText(
   ctx: CommandContext<Context>,
-  prevText?: string
+  prevText?: BotGroupReply
 ) {
   const userId = ctx.chat.id;
   const projectInfo = storedProjectInfos
@@ -213,6 +213,7 @@ export async function generateChannelShillText(
 
   delete userState[userId];
   const { name, description, tone, socials } = projectInfo;
+  const { match: focus } = ctx;
 
   let socialsData = "";
   let socialType: "telegram" | "website" = "website";
@@ -230,10 +231,11 @@ export async function generateChannelShillText(
   let prompt = "";
 
   if (!prevText) {
-    prompt = `Generate 8 shill texts in first person from the perspective of the shiller/user and not the project with at most 255 characters for a project with name - "${name}", in the tone - ${tone}. Description - ${description}. Focus more on the relevant information and include relevant hashtags.`;
+    prompt = `Generate 8 shill texts in first person from the perspective of the shiller/user and not the project with at most 255 characters for a project with name - "${name}", in the tone - ${tone}. Description - ${description}. Focus more on the relevant information and include relevant hashtags. Focus of the text should be - ${focus}. Don't have anything else other than the shill texts.`;
   } else {
-    const userRequest = ctx.message?.text;
-    prompt = `Previously you generated the below text - ${prevText}. Using this previous text for the following request - ${userRequest}.At most 255 characters per shill text. The shill texts should only be in first person from the perspective of the shiller/user and not the project.`;
+    const userRequest = ctx.message?.text || ctx.channelPost?.text;
+
+    prompt = `Previously you generated the below text - ${prevText.text}. Using this previous text follow the request - ${userRequest}. At most 255 characters per shill text. The shill texts should only be in first person from the perspective of the shiller/user and not the project. Focus of the text should be - ${prevText.focus}. Don't have anything else other than the shill texts.`;
   }
 
   if (socialsData) {
@@ -267,6 +269,7 @@ export async function generateChannelShillText(
     botGroupReplies[userId][generationMsg.message_id] = {
       startTime: getNowTimestamp(),
       text: shillText,
+      focus,
     };
   }
 
@@ -283,6 +286,6 @@ export async function variateChannelShillText(ctx: CommandContext<Context>) {
 
   const prevText = botGroupReplies[chatId]?.[threadId];
   if (prevText) {
-    generateChannelShillText(ctx, prevText.text);
+    generateChannelShillText(ctx, prevText);
   }
 }
