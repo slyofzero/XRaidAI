@@ -58,53 +58,58 @@ export async function generateMeme(
   ctx: CommandContext<Context>,
   manualPrompt?: string
 ) {
-  const userId = ctx.from?.id;
-  const userMemeData = memeData[userId || ""];
+  try {
+    const userId = ctx.from?.id;
+    const userMemeData = memeData[userId || ""];
 
-  let prompt = "";
+    let prompt = "";
 
-  if (manualPrompt) {
-    prompt = manualPrompt;
-  } else if (userId && userMemeData) {
-    delete userState[userId];
-    const { description, style } = userMemeData;
-    prompt = `${description} ${style}`;
-  } else {
-    ctx.reply("Please do /generate again");
-    return;
-  }
-
-  const generatingMsg = await ctx.reply("Generating a meme...");
-  const typingInterval = setInterval(() => {
-    ctx.api.sendChatAction(ctx.chat.id, "typing");
-  }, chatActionInterval);
-
-  const response = await imagine.generations(prompt, {
-    style: VariationStyle.IMAGINE_V5,
-  });
-
-  if (response.status() === Status.OK) {
-    const image = response.data();
-
-    if (image) {
-      const imageFilePath = `./temp/${nanoid(10)}.png`;
-      image.asFile(imageFilePath);
-      const imageFile = new InputFile(imageFilePath);
-      await ctx.replyWithPhoto(imageFile);
-
-      if (userId) memeConversations[userId] = imageFilePath;
+    if (manualPrompt) {
+      prompt = manualPrompt;
+    } else if (userId && userMemeData) {
+      delete userState[userId];
+      const { description, style } = userMemeData;
+      prompt = `${description} ${style}`;
+    } else {
+      await ctx.reply("Please do /generate again");
+      return;
     }
-  } else {
-    return ctx.reply("There was an error in generating your meme");
-  }
 
-  ctx.deleteMessages([generatingMsg.message_id]);
-  clearInterval(typingInterval);
-  log(`Generated image for ${userId}`);
+    const generatingMsg = await ctx.reply("Generating a meme...");
+    const typingInterval = setInterval(() => {
+      ctx.api.sendChatAction(ctx.chat.id, "typing");
+    }, chatActionInterval);
 
-  if (!manualPrompt) {
-    ctx.reply(
-      "If you want a variation of this image, you can type in another prompt. Although keep in mind that your variation description should be rather descriptive. Do not omit any details you want in the image."
-    );
+    const response = await imagine.generations(prompt, {
+      style: VariationStyle.IMAGINE_V5,
+    });
+
+    if (response.status() === Status.OK) {
+      const image = response.data();
+
+      if (image) {
+        const imageFilePath = `./temp/${nanoid(10)}.png`;
+        image.asFile(imageFilePath);
+        const imageFile = new InputFile(imageFilePath);
+        await ctx.replyWithPhoto(imageFile);
+
+        if (userId) memeConversations[userId] = imageFilePath;
+      }
+    } else {
+      return ctx.reply("There was an error in generating your meme");
+    }
+
+    ctx.deleteMessages([generatingMsg.message_id]);
+    clearInterval(typingInterval);
+    log(`Generated image for ${userId}`);
+
+    if (!manualPrompt) {
+      await ctx.reply(
+        "If you want a variation of this image, you can type in another prompt. Although keep in mind that your variation description should be rather descriptive. Do not omit any details you want in the image."
+      );
+    }
+  } catch (error) {
+    errorHandler(error);
+    ctx.reply("Please do /generate again");
   }
 }
