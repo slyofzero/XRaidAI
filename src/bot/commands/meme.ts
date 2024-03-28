@@ -91,7 +91,7 @@ export async function generateMeme(
         const imageFilePath = `./temp/${nanoid(10)}.png`;
         image.asFile(imageFilePath);
         const imageFile = new InputFile(imageFilePath);
-        await ctx.replyWithPhoto(imageFile);
+        ctx.replyWithPhoto(imageFile).catch((e) => errorHandler(e));
 
         if (userId) memeConversations[userId] = imageFilePath;
       }
@@ -104,7 +104,7 @@ export async function generateMeme(
     log(`Generated image for ${userId}`);
 
     if (!manualPrompt) {
-      await ctx.reply(
+      ctx.reply(
         "If you want a variation of this image, you can type in another prompt. Although keep in mind that your variation description should be rather descriptive. Do not omit any details you want in the image."
       );
     }
