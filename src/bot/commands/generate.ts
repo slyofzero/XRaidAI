@@ -5,7 +5,7 @@ import fs from "fs/promises";
 import { errorHandler } from "@/utils/handlers";
 import { checkProjectMember } from "@/utils/bot";
 import { addDocument } from "@/firebase";
-import { storedProjectIds } from "@/vars/projectIds";
+import { storedProjectIds, syncProjectIds } from "@/vars/projectIds";
 
 export async function generate(ctx: CommandContext<Context>) {
   try {
@@ -29,7 +29,7 @@ export async function generate(ctx: CommandContext<Context>) {
           addDocument({
             data: { chatId: userId },
             collectionName: "project_ids",
-          });
+          }).then(() => syncProjectIds());
         }
 
         await generateChannelShillText(ctx);

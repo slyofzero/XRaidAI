@@ -9,5 +9,5 @@ export async function syncProjectIds() {
   });
 
   storedProjectIds = projectInfos.map(({ chatId }) => chatId);
-  log("Synced project ids");
+  log(`Synced project ids, currently ${storedProjectIds.length} using`);
 }
