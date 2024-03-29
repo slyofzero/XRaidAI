@@ -5,6 +5,7 @@ import { BOT_TOKEN, IMAGE_API_KEY, OPEN_AI_KEY } from "./utils/env";
 import { OpenAI } from "openai";
 import { syncProjectInfo } from "./vars/info";
 import { client } from "imaginesdk";
+import { syncProjectIds } from "./vars/projectIds";
 
 export const teleBot = new Bot(BOT_TOKEN || "");
 log("Bot instance ready");
@@ -25,5 +26,5 @@ export const imagine: any = client(IMAGE_API_KEY);
   log("Telegram bot setup");
   initiateBotCommands();
   initiateCallbackQueries();
-  await Promise.all([syncProjectInfo()]);
+  await Promise.all([syncProjectInfo(), syncProjectIds()]);
 })();

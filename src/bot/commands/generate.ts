@@ -4,6 +4,8 @@ import { generateChannelShillText } from "./shillText";
 import fs from "fs/promises";
 import { errorHandler } from "@/utils/handlers";
 import { checkProjectMember } from "@/utils/bot";
+import { addDocument } from "@/firebase";
+import { storedProjectIds } from "@/vars/projectIds";
 
 export async function generate(ctx: CommandContext<Context>) {
   try {
@@ -23,6 +25,13 @@ export async function generate(ctx: CommandContext<Context>) {
           "To use this command please pass a prompt that tells the bot what to focus on.\n\nExample -\n/generate text should have an enthusiastic tone and go over the tokenomics"
         );
       } else {
+        if (!storedProjectIds.includes(userId)) {
+          addDocument({
+            data: { chatId: userId },
+            collectionName: "project_ids",
+          });
+        }
+
         await generateChannelShillText(ctx);
       }
 
