@@ -6,6 +6,8 @@ export interface BotGroupReply {
 
 export const botGroupReplies: {
   [key: number]: {
-    [key: number]: BotGroupReply;
+    [key: number]: {
+      [key: number]: BotGroupReply;
+    };
   };
 } = {};

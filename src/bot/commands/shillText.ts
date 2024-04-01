@@ -197,10 +197,17 @@ export async function generateShillText(ctx: CommandContext<Context>) {
 
 export async function generateChannelShillText(
   ctx: CommandContext<Context>,
-  prevText?: BotGroupReply
+  prevText?: BotGroupReply,
+  replyingToOther?: boolean
 ) {
   try {
     const userId = ctx.chat.id;
+    const fromUserId = ctx.from?.id || ctx.channelPost?.sender_chat.id;
+
+    if (!fromUserId || replyingToOther) {
+      return ctx.reply("Please do /generate");
+    }
+
     const projectInfo = storedProjectInfos
       .filter(({ chatId }) => chatId === userId)
       .at(0);
@@ -267,7 +274,8 @@ export async function generateChannelShillText(
         botGroupReplies[userId] = {};
       }
 
-      botGroupReplies[userId][generationMsg.message_id] = {
+      botGroupReplies[userId][fromUserId] = {};
+      botGroupReplies[userId][fromUserId][generationMsg.message_id] = {
         startTime: getNowTimestamp(),
         text: shillText,
         focus,
@@ -286,10 +294,13 @@ export async function variateChannelShillText(ctx: CommandContext<Context>) {
     ctx.message?.message_thread_id ||
     ctx.channelPost?.reply_to_message?.message_id;
   const chatId = ctx.chat.id;
-  if (!chatId || !threadId) return false;
+  const fromUserId = ctx.from?.id || ctx.channelPost?.sender_chat.id;
 
-  const prevText = botGroupReplies[chatId]?.[threadId];
+  if (!chatId || !threadId || !fromUserId) return false;
+
+  const prevText = botGroupReplies[chatId]?.[fromUserId]?.[threadId];
+  const replyingToOther = !botGroupReplies[chatId]?.[fromUserId];
   if (prevText) {
-    generateChannelShillText(ctx, prevText);
+    generateChannelShillText(ctx, prevText, replyingToOther);
   }
 }
