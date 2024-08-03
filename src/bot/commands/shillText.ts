@@ -164,7 +164,7 @@ export async function generateShillText(ctx: CommandContext<Context>) {
 
   const chatCompletion = await openai.chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "gpt-4-0125-preview",
+    model: "gpt-4o-mini",
   });
 
   for (const choice of chatCompletion.choices) {
@@ -259,7 +259,7 @@ export async function generateChannelShillText(
 
     const chatCompletion = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4o-mini",
     });
 
     for (const choice of chatCompletion.choices) {

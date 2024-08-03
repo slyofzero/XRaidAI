@@ -94,26 +94,26 @@ export function splitIntoRandomChunks(text: string) {
 
 export async function checkProjectMember(ctx: CommandContext<Context>) {
   try {
-    if (!XRAID_PROJECT_ID) {
-      return log("XRAID_PROJECT_ID is undefined");
-    }
+    // if (!XRAID_PROJECT_ID) {
+    //   return log("XRAID_PROJECT_ID is undefined");
+    // }
 
-    const { type } = ctx.chat;
-    const userId = ctx.chat.id;
+    // const { type } = ctx.chat;
+    // const userId = ctx.chat.id;
 
-    if (type === "private") {
-      const { status } = await teleBot.api.getChatMember(
-        XRAID_PROJECT_ID,
-        userId
-      );
+    // if (type === "private") {
+    //   const { status } = await teleBot.api.getChatMember(
+    //     XRAID_PROJECT_ID,
+    //     userId
+    //   );
 
-      const notMember =
-        status === "kicked" || status === "left" || status === "restricted";
+    //   const notMember =
+    //     status === "kicked" || status === "left" || status === "restricted";
 
-      if (notMember) {
-        throw Error("Not a member");
-      }
-    }
+    //   if (notMember) {
+    //     throw Error("Not a member");
+    //   }
+    // }
     return true;
   } catch (err) {
     ctx.reply(

@@ -73,7 +73,7 @@ export function initiateBotCommands() {
 
       const chatCompletion = await openai.chat.completions.create({
         messages: userConversation,
-        model: "gpt-4-turbo-preview",
+        model: "gpt-4o-mini",
       });
 
       const botReply = chatCompletion.choices.at(0)?.message.content || "";
