@@ -22,7 +22,7 @@ export async function generate(ctx: CommandContext<Context>) {
     } else if (type === "channel" || type === "supergroup") {
       if (!match) {
         await ctx.reply(
-          "To use this command please pass a prompt that tells the bot what to focus on.\n\nExample -\n/generate text should have an enthusiastic tone and go over the tokenomics"
+          "To use this command please pass a prompt that tells the bot what to focus on.\n\nExample -\n/generate text should have an enthusiastic tone and go over the tokenomics",
         );
       } else {
         if (!storedProjectIds.includes(userId)) {
@@ -38,7 +38,7 @@ export async function generate(ctx: CommandContext<Context>) {
       return;
     } else if (type === "group") {
       return await ctx.reply(
-        "To do /generate please make the bot an admin first and give it all permissions. This would allow the bot to read any new message in the group and reply to it if it needs to."
+        "To do /generate please make the bot an admin first and give it all permissions. This would allow the bot to read any new message in the group and reply to it if it needs to.",
       );
     }
 

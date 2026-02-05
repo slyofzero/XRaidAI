@@ -15,14 +15,14 @@ importers:
         specifier: ^16.3.1
         version: 16.3.1
       ethers:
-        specifier: '5.7'
+        specifier: ~5.7.2
         version: 5.7.2
       firebase-admin:
         specifier: ^12.0.0
         version: 12.0.0
       grammy:
-        specifier: ^1.20.3
-        version: 1.20.3
+        specifier: ^1.39.3
+        version: 1.39.3
       imaginesdk:
         specifier: ^1.1.0
         version: 1.1.0
@@ -247,8 +247,8 @@ packages:
     resolution: {integrity: sha512-4q8rKdLp35z8msAtrhr0pbos7BeD8T0tr6rMbBINewp9cfrwj7ROIElVwBluU8fZ596OvwQcjb6QCyBzTmkMRQ==}
     engines: {node: '>=14'}
 
-  '@grammyjs/types@3.4.6':
-    resolution: {integrity: sha512-J7xb4JFmdTG2JXDirytp9KuUBKhzT8cAeB3tg2dyWy0VzF/Pdi1t8YaBmNsGeL6VvdvAXHtBTfzrc3jBTD2Kuw==}
+  '@grammyjs/types@3.23.0':
+    resolution: {integrity: sha512-D3jQ4UWERPsyR3op/YFudMMIPNTU47vy7L51uO9/73tMELmjO/+LX5N36/Y0CG5IQfIsz43MxiHI5rgsK0/k+g==}
 
   '@grpc/grpc-js@1.10.1':
     resolution: {integrity: sha512-55ONqFytZExfOIjF1RjXPcVmT/jJqFzbbDqxK9jmRV4nxiYWtL9hENSW1Jfx0SdZfrvoqd44YJ/GJTqfRrawSQ==}
@@ -682,6 +682,15 @@ packages:
       supports-color:
         optional: true
 
+  debug@4.4.3:
+    resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
 
@@ -938,8 +947,8 @@ packages:
   gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
 
-  grammy@1.20.3:
-    resolution: {integrity: sha512-eHvS0iOD6aos7NbwL1dhFE6JDiMGm/Qz2TKgetRg/SZ5BIVoUSVSU/mn8L01r1Q7i+ywG9uePzy5xpK5CkOrUA==}
+  grammy@1.39.3:
+    resolution: {integrity: sha512-7arRRoOtOh9UwMwANZ475kJrWV6P3/EGNooeHlY0/SwZv4t3ZZ3Uiz9cAXK8Zg9xSdgmm8T21kx6n7SZaWvOcw==}
     engines: {node: ^12.20.0 || >=14.13.1}
 
   graphemer@1.4.0:
@@ -1228,6 +1237,9 @@ packages:
 
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
+
+  ms@2.1.3:
+    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
@@ -2101,7 +2113,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@grammyjs/types@3.4.6': {}
+  '@grammyjs/types@3.23.0': {}
 
   '@grpc/grpc-js@1.10.1':
     dependencies:
@@ -2601,6 +2613,10 @@ snapshots:
     optionalDependencies:
       supports-color: 5.5.0
 
+  debug@4.4.3:
+    dependencies:
+      ms: 2.1.3
+
   deep-is@0.1.4: {}
 
   define-data-property@1.1.4:
@@ -3003,11 +3019,11 @@ snapshots:
     dependencies:
       get-intrinsic: 1.2.4
 
-  grammy@1.20.3:
+  grammy@1.39.3:
     dependencies:
-      '@grammyjs/types': 3.4.6
+      '@grammyjs/types': 3.23.0
       abort-controller: 3.0.0
-      debug: 4.3.4(supports-color@5.5.0)
+      debug: 4.4.3
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
@@ -3317,6 +3333,8 @@ snapshots:
   moment@2.29.4: {}
 
   ms@2.1.2: {}
+
+  ms@2.1.3: {}
 
   nanoid@3.3.7: {}
 

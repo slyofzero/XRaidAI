@@ -1,4 +1,4 @@
-export const firebaseCollectionPrefix = "_xraid_bot";
+export const firebaseCollectionPrefix = "_husby";
 export const transactionValidTime = 25 * 60;
 export const gasLimit = 21000;
 export const chatActionInterval = 4000;

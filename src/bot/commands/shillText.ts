@@ -95,7 +95,7 @@ export async function shillTextStep4(ctx: CommandContext<Context>) {
   userState[userId] = "shillText-socials";
 
   ctx.reply(
-    'Does your project have any website or telegram channel? If so please pass the link to it in the next message. The bot would scan through the website or channel to pick out relevant information that can be used in the shill text.\n\nIf your project doesn\'t have any socials, just type "None" in the next message.'
+    'Does your project have any website or telegram channel? If so please pass the link to it in the next message. The bot would scan through the website or channel to pick out relevant information that can be used in the shill text.\n\nIf your project doesn\'t have any socials, just type "None" in the next message.',
   );
 }
 
@@ -110,7 +110,7 @@ export async function shillTextStep5(ctx: CommandContext<Context>) {
   userState[userId] = "shillText-focus";
 
   ctx.reply(
-    "Is there anything specific about the project that you'd like the shill text to focus on?"
+    "Is there anything specific about the project that you'd like the shill text to focus on?",
   );
 }
 
@@ -169,7 +169,7 @@ export async function generateShillText(ctx: CommandContext<Context>) {
 
   for (const choice of chatCompletion.choices) {
     const shillText = `${hardCleanUpBotMessage(
-      choice.message.content
+      choice.message.content,
     )}\n\n[Add XRAID to groups](https://t.me/${BOT_USERNAME}) \\| @XraidAiProject`;
 
     const botReplyChunks = splitIntoRandomChunks(shillText);
@@ -182,7 +182,7 @@ export async function generateShillText(ctx: CommandContext<Context>) {
           ctx.chat.id,
           generationMsg.message_id,
           replyText,
-          { parse_mode: "MarkdownV2" }
+          { parse_mode: "MarkdownV2" },
         );
         userConversation.push({ role: "assistant", content: replyText });
       } catch (error) {
@@ -198,7 +198,7 @@ export async function generateShillText(ctx: CommandContext<Context>) {
 export async function generateChannelShillText(
   ctx: CommandContext<Context>,
   prevText?: BotGroupReply,
-  replyingToOther?: boolean
+  replyingToOther?: boolean,
 ) {
   try {
     const userId = ctx.chat.id;
@@ -214,7 +214,7 @@ export async function generateChannelShillText(
 
     if (!projectInfo) {
       await ctx.reply(
-        "Please do /setinfo and set some information about your project. This information would be used each time you do /generate so is a one time task."
+        "Please do /setinfo and set some information about your project. This information would be used each time you do /generate so is a one time task.",
       );
       return;
     }
@@ -251,7 +251,7 @@ export async function generateChannelShillText(
     }
 
     const generationMsg = await ctx.reply(
-      "Generating shill text, please wait a few moments..."
+      "Generating shill text, please wait a few moments...",
     );
     const typingInterval = setInterval(() => {
       ctx.api.sendChatAction(ctx.chat.id, "typing");
@@ -267,7 +267,7 @@ export async function generateChannelShillText(
       await ctx.api.editMessageText(
         ctx.chat.id,
         generationMsg.message_id,
-        shillText
+        shillText,
       );
 
       if (!botGroupReplies[userId]) {

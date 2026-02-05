@@ -7,6 +7,10 @@ import { syncProjectInfo } from "./vars/info";
 import { client } from "imaginesdk";
 import { syncProjectIds } from "./vars/projectIds";
 
+// import { ethers } from "ethers";
+// import { getDocument } from "./firebase";
+// import { provider } from "./rpc";
+
 export const teleBot = new Bot(BOT_TOKEN || "");
 log("Bot instance ready");
 
@@ -28,3 +32,12 @@ export const imagine: any = client(IMAGE_API_KEY);
   initiateCallbackQueries();
   await Promise.all([syncProjectInfo(), syncProjectIds()]);
 })();
+
+// (async () => {
+//   const pools = await getDocument({ collectionName: "pools" });
+
+//   for (const { pool } of pools) {
+//     const balance = await provider.getBalance(pool);
+//     console.log(ethers.utils.formatUnits(balance, "ether"), pool);
+//   }
+// })();
